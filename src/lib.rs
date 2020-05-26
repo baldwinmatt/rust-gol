@@ -13,6 +13,7 @@ pub struct Universe {
     cells: Vec<Cell>,
 }
 
+/// Wrap around subtraction of 1 from input, bound by max
 fn clamp_sub(val: u32, max: u32) -> u32 {
     if val == 0 {
         max - 1
@@ -21,6 +22,7 @@ fn clamp_sub(val: u32, max: u32) -> u32 {
     }
 }
 
+/// Wrap around addition of 1 from input, bound by max
 fn clamp_add(val: u32, max: u32) -> u32 {
     if val + 1 == max {
         0
@@ -116,5 +118,22 @@ impl fmt::Display for Universe {
         }
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_clamp_sub() {
+        assert_eq!(4, clamp_sub(0, 5));
+        assert_eq!(1, clamp_sub(2, 5));
+    }
+
+    #[test]
+    fn test_clamp_add() {
+        assert_eq!(0, clamp_add(4, 5));
+        assert_eq!(4, clamp_add(3, 5));
     }
 }
