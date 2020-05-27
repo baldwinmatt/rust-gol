@@ -33,7 +33,7 @@ fn run_board(board: &mut Universe, period: &time::Duration, loops: u32) {
     }
 }
 
-fn run_file(filename: &String, period: &time::Duration) {
+fn run_file(filename: &str, period: &time::Duration) {
     let mut board = Universe::from_file(filename).unwrap();
 
     run_board(&mut board, &period, 30);

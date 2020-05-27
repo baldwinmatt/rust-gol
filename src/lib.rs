@@ -3,7 +3,6 @@ use std::error::Error;
 use std::fmt;
 use std::fs;
 
-#[repr(u8)]
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum Cell {
     Dead = 0,
@@ -109,7 +108,7 @@ impl Universe {
         self.cells[i] = Cell::Alive;
     }
 
-    pub fn from_file(filename: &String) -> Result<Universe, Box<dyn Error>> {
+    pub fn from_file(filename: &str) -> Result<Universe, Box<dyn Error>> {
         let contents = fs::read_to_string(filename)?;
 
         let mut height = 0;
@@ -149,7 +148,7 @@ impl fmt::Display for Universe {
                 let symbol = if cell == Cell::Dead { ' ' } else { '\u{2BC0}' };
                 write!(f, "{}", symbol)?;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
 
         Ok(())
