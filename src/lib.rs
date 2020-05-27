@@ -25,6 +25,14 @@ fn clamp_add(val: u32, max: u32) -> u32 {
     (val + 1) % max
 }
 
+fn wrapped_add_or_sub(val: u32, max: u32, offset: i8) -> u32 {
+    match offset {
+        -1 => clamp_sub(val, max),
+        1 => clamp_add(val, max),
+        _ => val,
+    }
+}
+
 impl Universe {
     fn get_index(&self, row: u32, col: u32) -> usize {
         (row * self.width + col) as usize
@@ -37,19 +45,17 @@ impl Universe {
     fn live_neighbour_count(&self, row: u32, col: u32) -> u8 {
         let mut count = 0;
 
-        let north = clamp_sub(row, self.height);
-        let south = clamp_add(row, self.height);
-        let west = clamp_sub(col, self.width);
-        let east = clamp_add(col, self.width);
-
-        count += self.cells[self.get_index(north, west)] as u8;
-        count += self.cells[self.get_index(north, col)] as u8;
-        count += self.cells[self.get_index(north, east)] as u8;
-        count += self.cells[self.get_index(row, east)] as u8;
-        count += self.cells[self.get_index(south, east)] as u8;
-        count += self.cells[self.get_index(south, col)] as u8;
-        count += self.cells[self.get_index(south, west)] as u8;
-        count += self.cells[self.get_index(row, west)] as u8;
+        for lat_off in &[-1, 0, 1] {
+            for lon_off in &[-1, 0, 1] {
+                // don't count self
+                if *lat_off == 0 && *lon_off == 0 {
+                    continue;
+                }
+                let lat = wrapped_add_or_sub(row, self.height, *lat_off);
+                let lon = wrapped_add_or_sub(col, self.width, *lon_off);
+                count += self.cells[self.get_index(lat, lon)] as u8;
+            }
+        }
 
         count
     }
