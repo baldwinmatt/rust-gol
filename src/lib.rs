@@ -2,6 +2,7 @@ use std::convert::TryInto;
 use std::error::Error;
 use std::fmt;
 use std::fs;
+use std::path::Path;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum Cell {
@@ -106,8 +107,8 @@ impl Universe {
         self.cells[i] = Cell::Alive;
     }
 
-    pub fn from_file(filename: &str) -> Result<Universe, Box<dyn Error>> {
-        let contents = fs::read_to_string(filename)?;
+    pub fn from_file(file: &Path) -> Result<Universe, Box<dyn Error>> {
+        let contents = fs::read_to_string(file.to_str().unwrap())?;
 
         let mut height = 0;
         let mut width = 0;

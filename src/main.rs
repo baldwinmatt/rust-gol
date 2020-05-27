@@ -1,3 +1,4 @@
+use std::path::Path;
 use std::{thread, time};
 
 use gol::Universe;
@@ -8,7 +9,10 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
 
     match args.len() {
-        2 => run_file(&args[1], &half_second),
+        2 => {
+            let file = Path::new(&args[1]);
+            run_file(&file, &half_second);
+        }
         _ => oscillator(&half_second),
     }
 }
@@ -33,8 +37,8 @@ fn run_board(board: &mut Universe, period: &time::Duration, loops: u32) {
     }
 }
 
-fn run_file(filename: &str, period: &time::Duration) {
-    let mut board = Universe::from_file(filename).unwrap();
+fn run_file(file: &Path, period: &time::Duration) {
+    let mut board = Universe::from_file(file).unwrap();
 
     run_board(&mut board, &period, 30);
 }
