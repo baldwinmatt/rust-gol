@@ -17,20 +17,12 @@ pub struct Universe {
 
 /// Wrap around subtraction of 1 from input, bound by max
 fn clamp_sub(val: u32, max: u32) -> u32 {
-    if val == 0 {
-        max - 1
-    } else {
-        val - 1
-    }
+    val.checked_sub(1).unwrap_or_else(|| max - 1)
 }
 
 /// Wrap around addition of 1 from input, bound by max
 fn clamp_add(val: u32, max: u32) -> u32 {
-    if val + 1 == max {
-        0
-    } else {
-        val + 1
-    }
+    (val + 1) % max
 }
 
 impl Universe {
