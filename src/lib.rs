@@ -1,4 +1,7 @@
+use std::convert::TryInto;
+use std::error::Error;
 use std::fmt;
+use std::fs;
 
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
@@ -104,6 +107,38 @@ impl Universe {
         let i = self.get_index(row, col);
 
         self.cells[i] = Cell::Alive;
+    }
+
+    pub fn from_file(filename: &String) -> Result<Universe, Box<dyn Error>> {
+        let contents = fs::read_to_string(filename)?;
+
+        let mut height = 0;
+        let mut width = 0;
+
+        let mut to_bless = Vec::new();
+
+        for line in contents.lines() {
+            if line.len() > width {
+                width = line.len();
+            }
+
+            for (i, c) in line.chars().enumerate() {
+                match c {
+                    'X' | 'x' => to_bless.push((height, i)),
+                    _ => {}
+                }
+            }
+
+            height += 1;
+        }
+
+        let mut universe = Universe::new(width.try_into().unwrap(), height);
+
+        for (row, col) in to_bless {
+            universe.bless_cell(row, col as u32);
+        }
+
+        Ok(universe)
     }
 }
 
